@@ -1,0 +1,28 @@
+name: Cat-Cafe CI Pipeline
+
+# Die Pipeline startet bei jedem Push auf den master-Branch
+on:
+  push:
+    branches: [ "master", "main" ]
+
+jobs:
+  build-test-check:
+    runs-on: ubuntu-latest # Wir nutzen einen Linux-Server von GitHub
+    steps:
+    - name: Code vom Repo herunterladen
+      uses: actions/checkout@v4
+    
+    - name: Java einrichten
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21' # Hier nutzen wir Java 21 (passe es ggf. an deine Version an)
+        distribution: 'temurin'
+
+    - name: 1. Projekt bauen (kompilieren)
+      run: ./gradlew assemble
+
+    - name: 2. JUnit-Tests ausfuehren
+      run: ./gradlew test
+
+    - name: 3. Formatierung ueberpruefen
+      run: ./gradlew spotlessCheck
